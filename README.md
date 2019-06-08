@@ -1,7 +1,7 @@
 Turns Metatrader5 into REST API server. 
 
 
-#Commands
+## Commands
 
 GET info - get account details, number of  orders, number of positions
 
