@@ -19,6 +19,7 @@ namespace cfx {
 
 		void setEndpoint(const utility::string_t & value);
 		utility::string_t endpoint() const;
+		utility::string_t getHostPort() const;
 		pplx::task<void> accept();
 		pplx::task<void> shutdown();
 

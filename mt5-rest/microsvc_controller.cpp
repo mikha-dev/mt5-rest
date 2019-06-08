@@ -20,6 +20,18 @@ void MicroserviceController::initRestOpHandlers() {
 	_listener.support(methods::DEL, std::bind(&MicroserviceController::handleDelete, this, std::placeholders::_1));
 	_listener.support(methods::PATCH, std::bind(&MicroserviceController::handlePatch, this, std::placeholders::_1));
 	_listener.support(methods::HEAD, std::bind(&MicroserviceController::handleHead, this, std::placeholders::_1));
+
+	pushCommand(L"inited", endpoint());
+}
+
+void MicroserviceController::pushCommand(string_t command, string_t options) {
+
+	web::json::value result = web::json::value::object();
+
+	result[U("command")] = web::json::value::string(command);
+	result[U("options")] = web::json::value::string(options);
+
+	commands.push_back(ws2s(result.serialize()));
 }
 
 const char* MicroserviceController::getCommand() {
@@ -144,8 +156,11 @@ void MicroserviceController::handleGet(http_request message) {
 
 			std::stringstream buffer;
 			buffer << in.rdbuf();
+			string b = buffer.str();
 
-			response.set_body(buffer.str());
+			boost::algorithm::replace_all<string,string,string>(b, "localhost:6542", ws2s( getHostPort()).c_str());
+
+			response.set_body(b);
 
 			message.reply(response);
 

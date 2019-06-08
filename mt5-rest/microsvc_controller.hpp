@@ -3,6 +3,7 @@
 #include <locale>
 #include <codecvt>
 
+#include <boost/algorithm/string/replace.hpp>
 #include <cpprest/http_client.h>
 #include "basic_controller.hpp"
 #include "session_manager.hpp"
@@ -51,6 +52,7 @@ public:
 
 	const char* getCommand();
 	void setCommandResponse(const char* command, const char* reponse);
+	void pushCommand(string_t command, string_t options);
 	int hasCommands();
 	int onEvent(const char* data);
 	void setCommandWaitTimeout(int timeout);

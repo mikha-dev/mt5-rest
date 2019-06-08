@@ -35,6 +35,10 @@ namespace cfx {
 		return _listener.uri().to_string();
 	}
 
+	utility::string_t BasicController::getHostPort() const {
+		return _listener.uri().host() + L":" + std::to_wstring( _listener.uri().port() );
+	}
+
 	pplx::task<void> BasicController::accept() {
 		initRestOpHandlers();
 		return _listener.open();
