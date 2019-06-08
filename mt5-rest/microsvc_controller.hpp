@@ -54,6 +54,7 @@ public:
 	int hasCommands();
 	int onEvent(const char* data);
 	void setCommandWaitTimeout(int timeout);
+	void setPath(const char* path);
 
 private:
 	static json::value responseNotImpl(const http::method & method);
@@ -62,4 +63,5 @@ private:
 	string_t callback_url;
 	string_t callback_format;
 	int wait_timeout;
+	string path_docs;
 };

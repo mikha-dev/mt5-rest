@@ -1,9 +1,14 @@
+#include <boost/filesystem/operations.hpp>
+#include <boost/filesystem/path.hpp>
+
 #include "stdafx.h"
 #include "microsvc_controller.hpp"
 #include "types.hpp"
 
-#define CMD_VERSION L"version"
+#define CMD_DOCS L"docs"
 #define CMD_SUB L"sub"
+#define CMD_SWAGGER L"swagger.json"
+#define CMD_VERSION L"version"
 
 using namespace web;
 using namespace http;
@@ -40,6 +45,11 @@ void MicroserviceController::setCommandResponse(const char* command, const char*
 
 void MicroserviceController::setCommandWaitTimeout(int timeout) {
 	wait_timeout = timeout*1000;
+}
+
+void MicroserviceController::setPath(const char *_path) {
+	path_docs.clear();
+	path_docs.append(_path);
 }
 
 int MicroserviceController::onEvent(const char* data) {
@@ -118,11 +128,61 @@ void MicroserviceController::handleGet(http_request message) {
 			message.reply(status_codes::NotFound);
 			return;
 		}
-		if (path[0] == CMD_VERSION) {
-			response[U("version")] = json::value::string(U("0.1.1"));
-			response[U("code")] = json::value::number(200);
-			message.reply(status_codes::OK, response);
 
+		if (path[0] == CMD_VERSION) {
+			
+			return;
+		}
+
+		if (path[0] == CMD_SWAGGER) {
+			string p(path_docs);
+			p.append("swagger.json");
+			std::ifstream in(p, ios::in);
+
+			http_response response(status_codes::OK);
+			response.headers().add(L"Content-Type", L"text/json; charset=UTF-8");
+
+			std::stringstream buffer;
+			buffer << in.rdbuf();
+
+			response.set_body(buffer.str());
+
+			message.reply(response);
+
+			in.close();
+			return;
+		}
+
+		if (path[0] == CMD_DOCS) {
+			utility::string_t body =
+				L"<html>"
+				"<head>"
+				"<link rel = \"stylesheet\" href = \"https://cdn.jsdelivr.net/npm/swagger-ui-dist@3.17.0/swagger-ui.css\">"
+				"<script src = \"https://unpkg.com/swagger-ui-dist@3/swagger-ui-bundle.js\"></script>"
+				"<script>"
+				"function render() {"
+				"var ui = SwaggerUIBundle({"
+					"url:  \"/swagger.json\","
+					"dom_id: '#swagger-ui',"
+					"presets : ["
+						"SwaggerUIBundle.presets.apis,"
+						"SwaggerUIBundle.SwaggerUIStandalonePreset"
+					"]"
+					"});"
+			"}"
+			"</script>"
+				"</head>"
+				"<body onload = \"render()\">"
+				"<div id = \"swagger-ui\"></div>"
+				"</body>"
+				"</html>";
+
+			http_response response(status_codes::OK);
+			response.headers().add(U("Access-Control-Allow-Origin"), U("*"));
+			response.headers().add(L"Content-Type", L"text/html; charset=UTF-8");
+			response.set_body(body);
+
+			message.reply(response);
 			return;
 		}
 
@@ -282,7 +342,12 @@ void MicroserviceController::handleHead(http_request message) {
 }
 
 void MicroserviceController::handleOptions(http_request message) {
-	message.reply(status_codes::NotImplemented, responseNotImpl(methods::OPTIONS));
+	http_response response(status_codes::OK);
+	response.headers().add(U("Allow"), U("GET, POST, OPTIONS"));
+	response.headers().add(U("Access-Control-Allow-Origin"), U("*"));
+	response.headers().add(U("Access-Control-Allow-Methods"), U("GET, POST, OPTIONS"));
+	response.headers().add(U("Access-Control-Allow-Headers"), U("Content-Type"));
+	message.reply(response);
 }
 
 void MicroserviceController::handleTrace(http_request message) {
