@@ -1,0 +1,326 @@
+{
+  "swagger" : "2.0",
+  "info" : {
+    "description" : "Turns Metatrader5 into REST API server",
+    "version" : "1.0.0",
+    "title" : "Metatrader5 REST API",
+    "contact" : {
+      "email" : "mikhail@dev4traders.com"
+    }
+  },
+  "tags" : [ {
+    "name" : "account",
+    "description" : "MT5 account"
+  }, {
+    "name" : "trade",
+    "description" : "Trade"
+  } ],
+  "paths" : {
+    "/info" : {
+      "get" : {
+        "tags" : [ "account" ],
+        "summary" : "get account info",
+        "operationId" : "info",
+        "description" : "Loads Account balance, broker, name, etc..\n",
+        "produces" : [ "application/json" ],
+        "responses" : {
+          "200" : {
+            "description" : "info in json",
+            "schema" : {
+              "$ref" : "#/definitions/AccountItem"
+            }
+          },
+          "400" : {
+            "description" : "bad input parameter"
+          }
+        }
+      }
+    },
+    "/balance" : {
+      "get" : {
+        "tags" : [ "account" ],
+        "summary" : "get account balance",
+        "operationId" : "balance",
+        "description" : "Loads Account balance, margin, free margin\n",
+        "produces" : [ "application/json" ],
+        "responses" : {
+          "200" : {
+            "description" : "balance info in json",
+            "schema" : {
+              "$ref" : "#/definitions/BalanceItem"
+            }
+          },
+          "400" : {
+            "description" : "bad input parameter"
+          }
+        }
+      }
+    },
+    "/orders" : {
+      "get" : {
+        "tags" : [ "account" ],
+        "summary" : "get account orders",
+        "operationId" : "orders",
+        "description" : "Loads Account Orders\n",
+        "produces" : [ "application/json" ],
+        "responses" : {
+          "200" : {
+            "description" : "orders array in json",
+            "schema" : {
+              "$ref" : "#/definitions/ArrayOfOrders"
+            }
+          },
+          "400" : {
+            "description" : "bad input parameter"
+          }
+        }
+      }
+    },
+    "/positions" : {
+      "get" : {
+        "tags" : [ "account" ],
+        "summary" : "get account positions",
+        "operationId" : "positions",
+        "description" : "Loads Account Positions\n",
+        "produces" : [ "application/json" ],
+        "responses" : {
+          "200" : {
+            "description" : "positions array in json",
+            "schema" : {
+              "$ref" : "#/definitions/ArrayOfPositions"
+            }
+          },
+          "400" : {
+            "description" : "bad input parameter"
+          }
+        }
+      }
+    },
+    "/trade" : {
+      "post" : {
+        "tags" : [ "trade" ],
+        "summary" : "Send Order",
+        "consumes" : [ "text/plain" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "",
+          "description" : "{\"actionType\": \"ORDER_TYPE_BUY\" }",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/TradeReturn"
+            }
+          },
+          "400" : {
+            "description" : "bad input parameter"
+          }
+        }
+      }
+    }
+  },
+  "definitions" : {
+    "TradeInput" : {
+      "type" : "object",
+      "properties" : {
+        "symbol" : {
+          "type" : "string",
+          "example" : "EURUSD"
+        },
+        "actionType" : {
+          "type" : "string",
+          "enum" : [ "ORDER_TYPE_SELL", "ORDER_TYPE_BUY", "ORDER_TYPE_BUY_LIMIT", "ORDER_TYPE_SELL_LIMIT", "ORDER_TYPE_BUY_STOP", "ORDER_TYPE_SELL_STOP", "POSITION_MODIFY", "POSITION_PARTIAL", "POSITION_CLOSE_ID", "POSITION_CLOSE_SYMBOL", "ORDER_MODIFY", "ORDER_CANCEL" ]
+        },
+        "volume" : {
+          "type" : "number",
+          "example" : 0.1
+        },
+        "price" : {
+          "type" : "number",
+          "example" : 1.12121
+        },
+        "stoploss" : {
+          "type" : "number",
+          "example" : 1.12121
+        },
+        "takeprfit" : {
+          "type" : "number",
+          "example" : 1.12121
+        }
+      }
+    },
+    "TradeReturn" : {
+      "type" : "object",
+      "properties" : {
+        "error" : {
+          "type" : "integer",
+          "example" : 6533
+        },
+        "description" : {
+          "type" : "string",
+          "example" : "ERR_WRONG_ACTION"
+        }
+      }
+    },
+    "AccountItem" : {
+      "type" : "object",
+      "properties" : {
+        "currency" : {
+          "type" : "string",
+          "example" : "USD"
+        },
+        "server" : {
+          "type" : "string",
+          "example" : "MetaQuotes-Demo"
+        },
+        "broker" : {
+          "type" : "string",
+          "example" : "MetaQuotes Software Corp."
+        },
+        "balance" : {
+          "type" : "number",
+          "example" : 1000.0
+        },
+        "equity" : {
+          "type" : "number",
+          "example" : 1000.0
+        },
+        "margin" : {
+          "type" : "number",
+          "example" : 1000.0
+        },
+        "margin_free" : {
+          "type" : "number",
+          "example" : 1000.0
+        },
+        "margin_level" : {
+          "type" : "number",
+          "example" : 1000.0
+        },
+        "orders_total" : {
+          "type" : "integer",
+          "example" : 2
+        },
+        "positions_total" : {
+          "type" : "integer",
+          "example" : 2
+        }
+      }
+    },
+    "BalanceItem" : {
+      "type" : "object",
+      "properties" : {
+        "balance" : {
+          "type" : "number",
+          "example" : 1000.0
+        },
+        "equity" : {
+          "type" : "number",
+          "example" : 1000.0
+        },
+        "margin" : {
+          "type" : "number",
+          "example" : 1000.0
+        },
+        "margin_free" : {
+          "type" : "number",
+          "example" : 1000.0
+        }
+      }
+    },
+    "ArrayOfOrders" : {
+      "type" : "array",
+      "items" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "integer",
+            "example" : 1
+          },
+          "type" : {
+            "type" : "string"
+          },
+          "magic" : {
+            "type" : "integer",
+            "example" : 0
+          },
+          "symbol" : {
+            "type" : "string",
+            "example" : "EURUSD"
+          },
+          "time_setup" : {
+            "type" : "string",
+            "example" : "12.06.2019 10:00:00"
+          },
+          "open" : {
+            "type" : "number",
+            "example" : 1.65656
+          },
+          "stoploss" : {
+            "type" : "number",
+            "example" : 1.65656
+          },
+          "takeprofit" : {
+            "type" : "number",
+            "example" : 1.65656
+          },
+          "volume" : {
+            "type" : "number",
+            "example" : 0.1
+          }
+        }
+      }
+    },
+    "ArrayOfPositions" : {
+      "type" : "array",
+      "items" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "integer",
+            "example" : 1
+          },
+          "type" : {
+            "type" : "string"
+          },
+          "magic" : {
+            "type" : "integer",
+            "example" : 0
+          },
+          "symbol" : {
+            "type" : "string",
+            "example" : "EURUSD"
+          },
+          "time_setup" : {
+            "type" : "string",
+            "example" : "12.06.2019 10:00:00"
+          },
+          "open" : {
+            "type" : "number",
+            "example" : 1.65656
+          },
+          "stoploss" : {
+            "type" : "number",
+            "example" : 1.65656
+          },
+          "takeprofit" : {
+            "type" : "number",
+            "example" : 1.65656
+          },
+          "volume" : {
+            "type" : "number",
+            "example" : 0.1
+          }
+        }
+      }
+    }
+  },
+  "host" : "localhost:6542",
+  "schemes" : [ "http" ]
+}
