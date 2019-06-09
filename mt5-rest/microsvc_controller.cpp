@@ -55,6 +55,13 @@ void MicroserviceController::setCommandResponse(const char* command, const char*
 	commandResponses[command] = response;
 }
 
+void MicroserviceController::setCallback(const char* url, const char* format) {
+	callback_url.clear();
+	callback_format.clear();
+	callback_url.append(s2ws(url));
+	callback_format.append(s2ws(format));	
+}
+
 void MicroserviceController::setCommandWaitTimeout(int timeout) {
 	wait_timeout = timeout*1000;
 }

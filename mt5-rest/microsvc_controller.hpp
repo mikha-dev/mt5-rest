@@ -57,6 +57,7 @@ public:
 	int onEvent(const char* data);
 	void setCommandWaitTimeout(int timeout);
 	void setPath(const char* path);
+	void setCallback(const char* url, const char* format);
 
 private:
 	static json::value responseNotImpl(const http::method & method);
