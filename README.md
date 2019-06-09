@@ -48,7 +48,8 @@ POST /trade - open position, details in POST body
   "volume": 0.1, 
   "stoploss": 1.3455, 
   "takeprofit": 1.33333, 
-  "comment": "test buy limit"}
+  "comment": "test buy limit"
+}
 ```
 
 ## Open Sell Limit
