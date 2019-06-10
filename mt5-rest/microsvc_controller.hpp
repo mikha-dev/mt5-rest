@@ -56,7 +56,7 @@ public:
 	int hasCommands();
 	int onEvent(const char* data);
 	void setCommandWaitTimeout(int timeout);
-	void setPath(const char* path);
+	void setPath(const char* path, const char* url_swaggger);
 	void setCallback(const char* url, const char* format);
 
 private:
@@ -67,4 +67,5 @@ private:
 	string_t callback_format;
 	int wait_timeout;
 	string path_docs;
+	string url_swagger;
 };

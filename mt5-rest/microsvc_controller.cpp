@@ -66,9 +66,12 @@ void MicroserviceController::setCommandWaitTimeout(int timeout) {
 	wait_timeout = timeout*1000;
 }
 
-void MicroserviceController::setPath(const char *_path) {
+void MicroserviceController::setPath(const char *_path, const char* _url_swagger) {
 	path_docs.clear();
 	path_docs.append(_path);
+
+	url_swagger.clear();
+	url_swagger.append(_url_swagger);
 }
 
 int MicroserviceController::onEvent(const char* data) {
@@ -165,7 +168,7 @@ void MicroserviceController::handleGet(http_request message) {
 			buffer << in.rdbuf();
 			string b = buffer.str();
 
-			boost::algorithm::replace_all<string,string,string>(b, "localhost:6542", ws2s( getHostPort()).c_str());
+			boost::algorithm::replace_all<string,string,string>(b, "localhost:6542", url_swagger);
 
 			response.set_body(b);
 

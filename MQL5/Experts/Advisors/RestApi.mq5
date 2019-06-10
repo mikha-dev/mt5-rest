@@ -7,12 +7,13 @@ input int      port = 6542;
 input int      commandWaitTimeout = 10;
 input string   callbackUrl = "http://localhost/callback";
 input string   callbackFormat = "json";
+input string   url_swagger = "localhost:6542";
 
 CRestApi api;
 
 int OnInit() {
 
-   api.Init(host, port, commandWaitTimeout);
+   api.Init(host, port, commandWaitTimeout, url_swagger);
    api.SetCallback( callbackUrl, callbackFormat );
 
    EventSetMillisecondTimer(1);
