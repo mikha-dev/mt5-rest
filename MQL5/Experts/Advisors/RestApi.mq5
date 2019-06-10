@@ -5,12 +5,15 @@
 input string   host = "http://localhost";
 input int      port = 6542;
 input int      commandWaitTimeout = 10;
+input string   callbackUrl = "http://localhost/callback";
+input string   callbackFormat = "json";
 
 CRestApi api;
 
 int OnInit() {
 
    api.Init(host, port, commandWaitTimeout);
+   api.SetCallback( callbackUrl, callbackFormat );
 
    EventSetMillisecondTimer(1);
    
