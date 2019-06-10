@@ -4,8 +4,9 @@
 #include <Trade/Trade.mqh>
 
 #import "mt5-rest.dll"
-   int Init( const uchar &url[], int port, int command_wait_timeout);
+   int Init( const uchar &url[], int port, int command_wait_timeout, const uchar&path[]);
    int GetCommand(uchar &data[]);
+   int SetCallback(const uchar &url[], const uchar &format[]);
    int SetCommandResponse(const uchar &command[], const uchar &response[]);
    int RaiseEvent(const uchar &data[]);
    void Deinit();
@@ -25,6 +26,13 @@ public:
       
       return RaiseEvent( d );   
    };
+   static int       SetCallback(string url, string format) {
+      uchar u[], f[];
+      StringToCharArray(url,u);
+      StringToCharArray(format,f);
+      
+      return SetCallback( u, f );   
+   };   
                     
    //---
    bool              Init(string _host, int _port, int commandWaitTimeout);
@@ -40,6 +48,7 @@ private:
    string getPositions();
    string getBalanceInfo();
    string getOrders();
+   string getTransactions();
    string tradingModule(CJAVal &dataObject);
    string orderDoneOrError(bool error, string funcName, CTrade &trade);
    string actionDoneOrError(int lastError, string funcName);
@@ -60,9 +69,11 @@ CRestApi::~CRestApi(void)
 //| Method Init.                                                     |
 //+------------------------------------------------------------------+
 bool CRestApi::Init(string _host, int _port, int _commandWaitTimeout) {
-   uchar __host[];
+   uchar __host[], _path[];
    StringToCharArray(_host, __host);
-   Init(__host,_port, _commandWaitTimeout);
+   StringToCharArray(TerminalInfoString(TERMINAL_DATA_PATH) + "\\MQL5\\Libraries\\", _path);
+   
+   Init(__host,_port, _commandWaitTimeout, _path);
    
    if(debug) Print("stated");
    
@@ -95,6 +106,20 @@ void CRestApi::Processing(void) {
       
       string action = jCommand["command"].ToStr();
       
+      if(action == "inited") {
+         Print("Listening on: " + jCommand["options"].ToStr());
+         Comment("Docs on: " + jCommand["options"].ToStr() + "docs");
+         
+         return;
+      }      
+      
+      if(action == "failed") {
+         Print("Failed to start, error: " + jCommand["options"].ToStr());
+         Comment("Failed to start server: " + jCommand["options"].ToStr());
+         
+         return;
+      }            
+      
       if(action == "info") {
          response = getAccountInfo();
       }
@@ -110,6 +135,10 @@ void CRestApi::Processing(void) {
       if(action == "positions") {
          response = getPositions();
       }                  
+      
+      if(action == "transactions") {
+         response = getTransactions();
+      }                        
       
       if(action == "trade") {
          response = tradingModule(jCommand);
@@ -144,8 +173,8 @@ string CRestApi::getAccountInfo() {
    info["broker"] = AccountInfoString(ACCOUNT_COMPANY);
    info["currency"] = AccountInfoString(ACCOUNT_CURRENCY);
    info["server"] = AccountInfoString(ACCOUNT_SERVER); 
-   info["trading_allowed"] = TerminalInfoInteger(TERMINAL_TRADE_ALLOWED);
-   info["bot_trading"] = AccountInfoInteger(ACCOUNT_TRADE_EXPERT);   
+   //info["trading_allowed"] = TerminalInfoInteger(TERMINAL_TRADE_ALLOWED);
+   //info["bot_trading"] = AccountInfoInteger(ACCOUNT_TRADE_EXPERT);   
    info["balance"] = AccountInfoDouble(ACCOUNT_BALANCE);
    info["equity"] = AccountInfoDouble(ACCOUNT_EQUITY);
    info["margin"] = AccountInfoDouble(ACCOUNT_MARGIN);
@@ -219,6 +248,47 @@ string CRestApi::getPositions() {
 }
 
 //+------------------------------------------------------------------+
+//| Fetch transactions information                               |
+//+------------------------------------------------------------------+
+string CRestApi::getTransactions(void) {
+      ResetLastError();
+      
+      ulong ticket;
+      CJAVal data, deal;
+      
+      if (HistorySelect(0,TimeCurrent()))   
+         {    
+            int dealsTotal = HistoryDealsTotal();
+
+            if(!dealsTotal) {
+              data.Add(deal);
+            }
+            
+            for(int i=0;i<dealsTotal;i++)
+             {
+   
+               if((ticket = HistoryDealGetTicket(i))>0) {   
+                  deal["id"] = (string)ticket;
+                  deal["price"] = HistoryDealGetDouble(ticket,DEAL_PRICE);
+                  deal["commission"] = HistoryDealGetDouble(ticket,DEAL_COMMISSION);
+                  deal["time"]= HistoryDealGetInteger(ticket,DEAL_TIME);
+                  deal["symbol"]=HistoryDealGetString(ticket,DEAL_SYMBOL);
+                  deal["type"]=EnumToString(ENUM_DEAL_TYPE(HistoryDealGetInteger(ticket,DEAL_TYPE)));                  
+                  deal["profit"] = HistoryDealGetDouble(ticket,DEAL_PROFIT);       
+                  deal["volume"] = HistoryDealGetDouble(ticket,DEAL_VOLUME);                         
+                  
+                  data.Add(deal);
+                } 
+             }
+         }
+         
+       string t=data.Serialize();
+       if(debug) {Print(t);}
+       
+       return t;
+}
+
+//+------------------------------------------------------------------+
 //| Fetch orders information                               |
 //+------------------------------------------------------------------+
 string CRestApi::getOrders() {
@@ -232,7 +302,9 @@ string CRestApi::getOrders() {
          {    
             int ordersTotal = OrdersTotal();
             // Create empty array if no orders
-            if(!ordersTotal) {data["error"]=(bool) false; data["orders"].Add(order);}
+            if(!ordersTotal) {
+              data.Add(order);
+            }
             
             for(int i=0;i<ordersTotal;i++)
              {
@@ -249,8 +321,7 @@ string CRestApi::getOrders() {
                   order["takeprofit"]=OrderGetDouble(ORDER_TP);
                   order["volume"]=OrderGetDouble(ORDER_VOLUME_INITIAL);
                   
-                  data["error"]=(bool) false;
-                  data["orders"].Add(order);
+                  data.Add(order);
                 } 
              }
          }
@@ -424,8 +495,7 @@ void CRestApi::OnTradeTransaction(const MqlTradeTransaction &trans,
 string CRestApi::orderDoneOrError(bool error, string funcName, CTrade &trade) {
       CJAVal conf;
       
-      conf["error"]=(bool) error;
-      conf["retcode"]=(int) trade.ResultRetcode();
+      conf["error"]=(int) trade.ResultRetcode();
       conf["desription"]=(string) CRestApi::GetRetcodeID(trade.ResultRetcode());
       // conf["deal"]=(int) trade.ResultDeal(); 
       conf["order"]=(int) trade.ResultOrder();
@@ -447,10 +517,7 @@ string CRestApi::orderDoneOrError(bool error, string funcName, CTrade &trade) {
 string CRestApi::actionDoneOrError(int lastError, string funcName) {
       CJAVal conf;
       
-      conf["error"]=(bool)true;
-      if(lastError==0) conf["error"]=(bool)false;
-      
-      conf["lastError"]=(string) lastError;
+      conf["error"]=(string) lastError;
       conf["description"]=GetErrorID(lastError);
       conf["function"]=(string) funcName;
       
