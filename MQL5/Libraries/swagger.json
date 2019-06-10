@@ -76,6 +76,26 @@
         }
       }
     },
+    "/transactions" : {
+      "get" : {
+        "tags" : [ "account" ],
+        "summary" : "get account deals/transactions",
+        "operationId" : "transactions",
+        "description" : "Loads Account Transactions\n",
+        "produces" : [ "application/json" ],
+        "responses" : {
+          "200" : {
+            "description" : "transactions array in json",
+            "schema" : {
+              "$ref" : "#/definitions/ArrayOfTransactions"
+            }
+          },
+          "400" : {
+            "description" : "bad input parameter"
+          }
+        }
+      }
+    },    
     "/positions" : {
       "get" : {
         "tags" : [ "account" ],
@@ -277,6 +297,37 @@
         }
       }
     },
+    "ArrayOfTransactions" : {
+      "type" : "array",
+      "items" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "integer",
+            "example" : 1
+          },
+          "type" : {
+            "type" : "string"
+          },
+          "symbol" : {
+            "type" : "string",
+            "example" : "EURUSD"
+          },
+          "time" : {
+            "type" : "string",
+            "example" : "12.06.2019 10:00:00"
+          },
+          "open" : {
+            "type" : "number",
+            "example" : 1.65656
+          },
+          "volume" : {
+            "type" : "number",
+            "example" : 0.1
+          }
+        }
+      }
+    },    
     "ArrayOfPositions" : {
       "type" : "array",
       "items" : {
