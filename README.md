@@ -106,7 +106,7 @@ POST /trade - open position, details in POST body
 { "actionType": "ORDER_CANCEL", "id": 1212121 }
 ```
 
-# Example of /trade output
+# Examples of /trade output
 ```json
 {
     "error": 10018,
@@ -116,6 +116,18 @@ POST /trade - open position, details in POST body
     "price": 0,
     "bid": 0,
     "ask": 0,
+    "function": "CRestApi::tradingModule"
+}
+```
+```json
+{
+    "error": 10009,
+    "desription": "TRADE_RETCODE_DONE",
+    "order": 405895526,
+    "volume": 0.1,
+    "price": 1.13047,
+    "bid": 1.13038,
+    "ask": 1.13047,
     "function": "CRestApi::tradingModule"
 }
 ```
