@@ -179,6 +179,7 @@ string CRestApi::getAccountInfo() {
    info["equity"] = AccountInfoDouble(ACCOUNT_EQUITY);
    info["margin"] = AccountInfoDouble(ACCOUNT_MARGIN);
    info["margin_free"] = AccountInfoDouble(ACCOUNT_MARGIN_FREE);
+   info["leverage"] = AccountInfoInteger(ACCOUNT_LEVERAGE);
    info["margin_level"] = AccountInfoDouble(ACCOUNT_MARGIN_LEVEL);
    info["positions_total"] = PositionsTotal();
    if (HistorySelect(0,TimeCurrent())) {
