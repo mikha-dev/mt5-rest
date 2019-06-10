@@ -3,6 +3,8 @@ Turns Metatrader5 into REST API server.
 
 ## Commands
 
+POST /sub - setup web hook. options: callback_url and callback_format (json or x-form)
+
 GET /info - get account details, number of  orders, number of positions
 
 GET /positions - returns list of positions
