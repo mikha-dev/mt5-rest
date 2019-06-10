@@ -1,5 +1,7 @@
 Turns Metatrader5 into REST API server. 
 
+Note: make sure you have VSredist: https://www.microsoft.com/en-ie/download/details.aspx?id=48145
+
 
 ## Commands
 
