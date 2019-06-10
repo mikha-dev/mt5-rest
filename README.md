@@ -9,6 +9,8 @@ GET /info - get account details, number of  orders, number of positions
 
 GET /positions - returns list of positions
 
+GET /transactions - returns list of deals/transactions
+
 GET /balance - returns balance, margin, free margin
 
 GET /orders - returns list of orders
