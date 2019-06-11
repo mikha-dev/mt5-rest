@@ -2,6 +2,7 @@ Turns Metatrader5 into REST API server.
 
 Note: make sure you have VSredist: https://www.microsoft.com/en-ie/download/details.aspx?id=48145
 
+time_setup, time is MQL5 datetime, check docs at: https://www.mql5.com/en/docs/basis/types/integer/datetime
 
 ## Commands
 
