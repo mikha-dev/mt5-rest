@@ -202,12 +202,16 @@ void MicroserviceController::handleGet(http_request message) {
 			}
 		}
 
-		string command = "{\"command\":\"";
+		web::json::value result = web::json::value::object();
 
-		command.append(ws2s( path[0] ));
-		command.append("\"}");
+		result[L"command"] = web::json::value::string(path[0]);
+
+		for (auto it = params.begin(); it != params.end(); ++it) {
+			result[it->first] = web::json::value::string(it->second);
+		}
+
+		string command = ws2s(result.serialize());
 		commands.push_back(command);
-
 		for (int i = 0; i < wait_timeout; i++) {
 			if (commandResponses.contains(command)) {					
 				message.reply(status_codes::OK, commandResponses[command], "application/json");
