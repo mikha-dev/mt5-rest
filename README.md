@@ -4,6 +4,8 @@ Note: make sure you have VSredist: https://www.microsoft.com/en-ie/download/deta
 
 time_setup, time is MQL5 datetime, check docs at: https://www.mql5.com/en/docs/basis/types/integer/datetime
 
+check "retcode" for /trade command on that page: https://www.mql5.com/en/docs/constants/errorswarnings/enum_trade_return_codes
+
 ## Commands
 
 POST /sub - setup web hook. options: callback_url and callback_format (json or x-form)
