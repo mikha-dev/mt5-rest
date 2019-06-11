@@ -9,7 +9,7 @@ input string   callbackUrl = "http://localhost/callback";
 input string   callbackFormat = "json";
 input string   url_swagger = "localhost:6542";
 input int      CommandPingMilliseconds = 10;
-string   AuthToken = "{test-token}";
+input string   AuthToken = "{test-token}";
 
 CRestApi api;
 
