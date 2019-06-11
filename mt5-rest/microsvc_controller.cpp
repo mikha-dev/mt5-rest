@@ -147,12 +147,21 @@ void MicroserviceController::handleGet(http_request message) {
 
 	try {
 		if (path.size() < 1) {
-			message.reply(status_codes::NotFound);
-			return;
-		}
+			string p(path_docs);
+			p.append("docs.html");
+			std::ifstream in(p, ios::in);
 
-		if (path[0] == CMD_VERSION) {
-			
+			http_response response(status_codes::OK);
+			response.headers().add(L"Content-Type", L"text/html; charset=UTF-8");
+
+			std::stringstream buffer;
+			buffer << in.rdbuf();
+			string b = buffer.str();
+			in.close();
+
+			response.set_body(b);
+			message.reply(response);
+
 			return;
 		}
 
@@ -167,47 +176,14 @@ void MicroserviceController::handleGet(http_request message) {
 			std::stringstream buffer;
 			buffer << in.rdbuf();
 			string b = buffer.str();
+			in.close();
 
 			boost::algorithm::replace_all<string,string,string>(b, "localhost:6542", url_swagger);
 
 			response.set_body(b);
 
 			message.reply(response);
-
-			in.close();
-			return;
-		}
-
-		if (path[0] == CMD_DOCS) {
-			utility::string_t body =
-				L"<html>"
-				"<head>"
-				"<link rel = \"stylesheet\" href = \"https://cdn.jsdelivr.net/npm/swagger-ui-dist@3.17.0/swagger-ui.css\">"
-				"<script src = \"https://unpkg.com/swagger-ui-dist@3/swagger-ui-bundle.js\"></script>"
-				"<script>"
-				"function render() {"
-				"var ui = SwaggerUIBundle({"
-					"url:  \"/swagger.json\","
-					"dom_id: '#swagger-ui',"
-					"presets : ["
-						"SwaggerUIBundle.presets.apis,"
-						"SwaggerUIBundle.SwaggerUIStandalonePreset"
-					"]"
-					"});"
-			"}"
-			"</script>"
-				"</head>"
-				"<body onload = \"render()\">"
-				"<div id = \"swagger-ui\"></div>"
-				"</body>"
-				"</html>";
-
-			http_response response(status_codes::OK);
-			response.headers().add(U("Access-Control-Allow-Origin"), U("*"));
-			response.headers().add(L"Content-Type", L"text/html; charset=UTF-8");
-			response.set_body(body);
-
-			message.reply(response);
+			
 			return;
 		}
 
