@@ -11,7 +11,7 @@ GET /info - get account details, number of  orders, number of positions
 
 GET /positions - returns list of positions
 
-GET /transactions - returns list of deals/transactions
+POST /transactions - returns list of deals/transactions
 
 GET /balance - returns balance, margin, free margin
 
@@ -131,5 +131,13 @@ POST /trade - open position, details in POST body
     "bid": 1.13038,
     "ask": 1.13047,
     "function": "CRestApi::tradingModule"
+}
+```
+
+# Example of POST body for /transactions command
+```json
+{
+    "offset": 0,
+    "limit": 10
 }
 ```
