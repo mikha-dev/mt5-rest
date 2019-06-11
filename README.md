@@ -4,7 +4,7 @@ Note: make sure you have VSredist: https://www.microsoft.com/en-ie/download/deta
 
 time_setup, time is MQL5 datetime, check docs at: https://www.mql5.com/en/docs/basis/types/integer/datetime
 
-check "retcode" for /trade command on that page: https://www.mql5.com/en/docs/constants/errorswarnings/enum_trade_return_codes
+check "error" for /trade command on that page: https://www.mql5.com/en/docs/constants/errorswarnings/enum_trade_return_codes
 
 ## Commands
 
@@ -116,7 +116,7 @@ POST /trade - open position, details in POST body
 {
     "error": 10018,
     "desription": "TRADE_RETCODE_MARKET_CLOSED",
-    "order": 0,
+    "order_id": 0,
     "volume": 0,
     "price": 0,
     "bid": 0,
@@ -128,7 +128,7 @@ POST /trade - open position, details in POST body
 {
     "error": 10009,
     "desription": "TRADE_RETCODE_DONE",
-    "order": 405895526,
+    "order_id": 405895526,
     "volume": 0.1,
     "price": 1.13047,
     "bid": 1.13038,
