@@ -171,6 +171,10 @@
     "TradeInput" : {
       "type" : "object",
       "properties" : {
+        "id" : {
+          "type" : "integer",
+          "example" : 1
+        },        
         "symbol" : {
           "type" : "string",
           "example" : "EURUSD"
@@ -191,7 +195,7 @@
           "type" : "number",
           "example" : 1.12121
         },
-        "takeprfit" : {
+        "takeprofit" : {
           "type" : "number",
           "example" : 1.12121
         }

@@ -485,7 +485,7 @@ void CRestApi::OnTradeTransaction(const MqlTradeTransaction &trans,
                CJAVal data, req, res;
                
                req["action"]=EnumToString(request.action);
-               req["order"]=(int) request.order;
+               req["order_id"]=(int) request.order;
                req["symbol"]=(string) request.symbol;
                req["volume"]=(double) request.volume;
                req["price"]=(double) request.price;
@@ -504,7 +504,7 @@ void CRestApi::OnTradeTransaction(const MqlTradeTransaction &trans,
                res["retcode"]=(int) result.retcode;
                res["result"]=(string) CRestApi::GetRetcodeID(result.retcode);
                res["deal"]=(int) result.order;
-               res["order"]=(int) result.order;
+               res["order_id"]=(int) result.order;
                res["volume"]=(double) result.volume;
                res["price"]=(double) result.price;
                res["comment"]=(string) result.comment;
@@ -535,7 +535,7 @@ string CRestApi::orderDoneOrError(bool error, string funcName, CTrade &trade) {
       conf["error"]=(int) trade.ResultRetcode();
       conf["desription"]=(string) CRestApi::GetRetcodeID(trade.ResultRetcode());
       // conf["deal"]=(int) trade.ResultDeal(); 
-      conf["order"]=(int) trade.ResultOrder();
+      conf["order_id"]=(int) trade.ResultOrder();
       conf["volume"]=(double) trade.ResultVolume();
       conf["price"]=(double) trade.ResultPrice();
       conf["bid"]=(double) trade.ResultBid();
