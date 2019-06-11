@@ -58,6 +58,10 @@ public:
 	void setCommandWaitTimeout(int timeout);
 	void setPath(const char* path, const char* url_swaggger);
 	void setCallback(const char* url, const char* format);
+	void setAuthToken(const char* _token) {
+		token.clear();
+		token.append(s2ws(_token));
+	};
 
 private:
 	static json::value responseNotImpl(const http::method & method);
@@ -68,4 +72,5 @@ private:
 	int wait_timeout;
 	string path_docs;
 	string url_swagger;
+	string_t token;
 };

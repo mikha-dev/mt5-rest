@@ -9,6 +9,7 @@
    int SetCallback(const uchar &url[], const uchar &format[]);
    int SetCommandResponse(const uchar &command[], const uchar &response[]);
    int RaiseEvent(const uchar &data[]);
+   int SetAuthToken(const uchar &token[]);
    void Deinit();
 #import
 
@@ -36,6 +37,7 @@ public:
                     
    //---
    bool              Init(string _host, int _port, int commandWaitTimeout, string _url_swagger);
+   bool              SetAuth(string token);
    void              Deinit(void);
    void              Processing(void);
    void              OnTradeTransaction(const MqlTradeTransaction &trans,
@@ -80,6 +82,14 @@ bool CRestApi::Init(string _host, int _port, int _commandWaitTimeout, string _ur
    
    ChartRedraw();
    return(true);   
+}
+
+bool CRestApi::SetAuth(string token) {
+   uchar d[];
+   StringToCharArray(token,d);
+   int ret = SetAuthToken( d );
+   
+   return true;
 }
 //+------------------------------------------------------------------+
 //| Method Deinit.                                                   |
@@ -267,11 +277,8 @@ string CRestApi::getTransactions(CJAVal &dataObject) {
       ulong ticket;
       CJAVal data, deal;
       
-      int offset = dataObject["offset"].ToInt();
-      int limit = dataObject["limit"].ToInt();
-      
-      Print("offset" + (string)offset);
-      Print("limit" + (string)limit);
+      int offset = (int)dataObject["offset"].ToInt();
+      int limit = (int)dataObject["limit"].ToInt();
       
       if (HistorySelect(0,TimeCurrent()))   
          {    

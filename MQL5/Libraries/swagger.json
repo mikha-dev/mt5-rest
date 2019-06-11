@@ -19,6 +19,7 @@
     "/info" : {
       "get" : {
         "tags" : [ "account" ],
+        "security":[{"apiKey":[]}],
         "summary" : "get account info",
         "operationId" : "info",
         "description" : "Loads Account balance, broker, name, etc..\n",
@@ -39,6 +40,7 @@
     "/balance" : {
       "get" : {
         "tags" : [ "account" ],
+        "security":[{"apiKey":[]}],
         "summary" : "get account balance",
         "operationId" : "balance",
         "description" : "Loads Account balance, margin, free margin\n",
@@ -59,6 +61,7 @@
     "/orders" : {
       "get" : {
         "tags" : [ "account" ],
+        "security":[{"apiKey":[]}],
         "summary" : "get account orders",
         "operationId" : "orders",
         "description" : "Loads Account Orders\n",
@@ -79,6 +82,7 @@
     "/transactions" : {
       "post" : {
         "tags" : [ "account" ],
+        "security":[{"apiKey":[]}],
         "summary" : "get account deals/transactions",
         "operationId" : "transactions",
         "description" : "Loads Account Transactions\n",
@@ -108,6 +112,7 @@
     "/positions" : {
       "get" : {
         "tags" : [ "account" ],
+        "security":[{"apiKey":[]}],
         "summary" : "get account positions",
         "operationId" : "positions",
         "description" : "Loads Account Positions\n",
@@ -128,6 +133,7 @@
     "/trade" : {
       "post" : {
         "tags" : [ "trade" ],
+        "security":[{"apiKey":[]}],
         "summary" : "Send Order",
         "consumes" : [ "text/plain" ],
         "produces" : [ "application/json" ],
@@ -152,6 +158,13 @@
           }
         }
       }
+    }
+  },
+  "securityDefinitions": {
+    "apiKey": {
+      "type": "apiKey",
+      "in": "header",
+      "name": "Authorization"
     }
   },
   "definitions" : {

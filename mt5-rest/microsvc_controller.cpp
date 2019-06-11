@@ -146,6 +146,7 @@ void MicroserviceController::handleGet(http_request message) {
 	auto params = requestQueryParams(message);
 
 	try {
+
 		if (path.size() < 1) {
 			string p(path_docs);
 			p.append("docs.html");
@@ -185,6 +186,20 @@ void MicroserviceController::handleGet(http_request message) {
 			message.reply(response);
 			
 			return;
+		}
+
+		if (!token.empty()) {
+			if (!message.headers().has(header_names::authorization)) {
+				message.reply(status_codes::Unauthorized);
+				return;
+			}
+
+			auto headers = message.headers();
+
+			if (headers[header_names::authorization] != token) {
+				message.reply(status_codes::Unauthorized);
+				return;
+			}
 		}
 
 		string command = "{\"command\":\"";

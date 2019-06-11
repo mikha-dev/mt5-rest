@@ -9,6 +9,7 @@ input string   callbackUrl = "http://localhost/callback";
 input string   callbackFormat = "json";
 input string   url_swagger = "localhost:6542";
 input int      CommandPingMilliseconds = 10;
+string   AuthToken = "{test-token}";
 
 CRestApi api;
 
@@ -16,6 +17,7 @@ int OnInit() {
 
    api.Init(host, port, commandWaitTimeout, url_swagger);
    api.SetCallback( callbackUrl, callbackFormat );
+   api.SetAuth( AuthToken );
 
    EventSetMillisecondTimer(CommandPingMilliseconds);
    
