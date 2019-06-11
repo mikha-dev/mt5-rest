@@ -77,12 +77,21 @@
       }
     },
     "/transactions" : {
-      "get" : {
+      "post" : {
         "tags" : [ "account" ],
         "summary" : "get account deals/transactions",
         "operationId" : "transactions",
         "description" : "Loads Account Transactions\n",
         "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "",
+          "description" : "{\"offset\": 0, \"limit\":10 }",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],        
         "responses" : {
           "200" : {
             "description" : "transactions array in json",

@@ -4,7 +4,7 @@
 #include <Trade/Trade.mqh>
 
 #import "mt5-rest.dll"
-   int Init( const uchar &url[], int port, int command_wait_timeout, const uchar&path[]);
+   int Init( const uchar &url[], int port, int command_wait_timeout, const uchar&path[], const uchar &url[]);
    int GetCommand(uchar &data[]);
    int SetCallback(const uchar &url[], const uchar &format[]);
    int SetCommandResponse(const uchar &command[], const uchar &response[]);
@@ -35,7 +35,7 @@ public:
    };   
                     
    //---
-   bool              Init(string _host, int _port, int commandWaitTimeout);
+   bool              Init(string _host, int _port, int commandWaitTimeout, string _url_swagger);
    void              Deinit(void);
    void              Processing(void);
    void              OnTradeTransaction(const MqlTradeTransaction &trans,
@@ -48,7 +48,7 @@ private:
    string getPositions();
    string getBalanceInfo();
    string getOrders();
-   string getTransactions();
+   string getTransactions(CJAVal &dataObject);
    string tradingModule(CJAVal &dataObject);
    string orderDoneOrError(bool error, string funcName, CTrade &trade);
    string actionDoneOrError(int lastError, string funcName);
@@ -68,12 +68,13 @@ CRestApi::~CRestApi(void)
 //+------------------------------------------------------------------+
 //| Method Init.                                                     |
 //+------------------------------------------------------------------+
-bool CRestApi::Init(string _host, int _port, int _commandWaitTimeout) {
-   uchar __host[], _path[];
+bool CRestApi::Init(string _host, int _port, int _commandWaitTimeout, string _url_swagger) {
+   uchar __host[], _path[], _url[];
    StringToCharArray(_host, __host);
+   StringToCharArray(_url_swagger, _url);
    StringToCharArray(TerminalInfoString(TERMINAL_DATA_PATH) + "\\MQL5\\Libraries\\", _path);
    
-   Init(__host,_port, _commandWaitTimeout, _path);
+   Init(__host,_port, _commandWaitTimeout, _path, _url);
    
    if(debug) Print("stated");
    
@@ -108,7 +109,7 @@ void CRestApi::Processing(void) {
       
       if(action == "inited") {
          Print("Listening on: " + jCommand["options"].ToStr());
-         Comment("Docs on: " + jCommand["options"].ToStr() + "docs");
+         Comment("Open " + jCommand["options"].ToStr() + " for docs");
          
          return;
       }      
@@ -137,7 +138,7 @@ void CRestApi::Processing(void) {
       }                  
       
       if(action == "transactions") {
-         response = getTransactions();
+         response = getTransactions(jCommand);
       }                        
       
       if(action == "trade") {
@@ -203,6 +204,15 @@ string CRestApi::getBalanceInfo() {
    info["margin"] = AccountInfoDouble(ACCOUNT_MARGIN);
    info["margin_free"] = AccountInfoDouble(ACCOUNT_MARGIN_FREE);
    
+   info["positions_total"] = PositionsTotal();
+   if (HistorySelect(0,TimeCurrent())) {
+      info["deal_total"] = HistoryDealsTotal();
+      info["orders_total"] = OrdersTotal();   
+   } else {
+      info["deal_total"] = 0;
+      info["orders_total"] = 0;
+   }
+   
    string t = info.Serialize();
    if(debug) Print(t);   
    
@@ -251,22 +261,35 @@ string CRestApi::getPositions() {
 //+------------------------------------------------------------------+
 //| Fetch transactions information                               |
 //+------------------------------------------------------------------+
-string CRestApi::getTransactions(void) {
+string CRestApi::getTransactions(CJAVal &dataObject) {
       ResetLastError();
       
       ulong ticket;
       CJAVal data, deal;
       
+      int offset = dataObject["offset"].ToInt();
+      int limit = dataObject["limit"].ToInt();
+      
+      Print("offset" + (string)offset);
+      Print("limit" + (string)limit);
+      
       if (HistorySelect(0,TimeCurrent()))   
          {    
             int dealsTotal = HistoryDealsTotal();
-
+            
+            if(limit == 0 )
+               limit = dealsTotal-1;
+            else
+               limit = limit-1;
+               
+            if(offset > dealsTotal-1)
+               offset = dealsTotal-1;
+               
             if(!dealsTotal) {
               data.Add(deal);
             }
             
-            for(int i=0;i<dealsTotal;i++)
-             {
+            for(int i = MathMin(offset + limit, dealsTotal-1);i>=offset;i--) {
    
                if((ticket = HistoryDealGetTicket(i))>0) {   
                   deal["id"] = (string)ticket;
@@ -357,7 +380,13 @@ string CRestApi::tradingModule(CJAVal &dataObject) {
       // Market orders
       if(actionType=="ORDER_TYPE_BUY" || actionType=="ORDER_TYPE_SELL")
          {  
-            ENUM_ORDER_TYPE orderType=(ENUM_ORDER_TYPE)actionType; 
+            ENUM_ORDER_TYPE orderType;
+            
+            if( actionType=="ORDER_TYPE_BUY" )
+               orderType = ORDER_TYPE_BUY;
+            else
+              orderType = ORDER_TYPE_SELL;
+               
             price = SymbolInfoDouble(symbol,SYMBOL_ASK);                                        
             if(orderType==ORDER_TYPE_SELL) price=SymbolInfoDouble(symbol,SYMBOL_BID);
             
