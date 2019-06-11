@@ -239,7 +239,7 @@ string CRestApi::getPositions() {
       // Get positions  
       int positionsTotal=PositionsTotal();
       // Create empty array if no positions
-      if(!positionsTotal) data["positions"].Add(position);
+      if(!positionsTotal) data.Add(position);
       // Go through positions in a loop
       for(int i=0;i<positionsTotal;i++)
         {
@@ -257,7 +257,7 @@ string CRestApi::getPositions() {
               position["takeprofit"]=PositionGetDouble(POSITION_TP);
               position["volume"]=PositionGetDouble(POSITION_VOLUME);
             
-              data["positions"].Add(position);
+              data.Add(position);
             }
           // Error handling    
           else actionDoneOrError(ERR_TRADE_POSITION_NOT_FOUND, __FUNCTION__);

@@ -254,6 +254,20 @@ void MicroserviceController::handlePost(http_request message) {
 			return;
 		}
 
+		if (!token.empty()) {
+			if (!message.headers().has(header_names::authorization)) {
+				message.reply(status_codes::Unauthorized);
+				return;
+			}
+
+			auto headers = message.headers();
+
+			if (headers[header_names::authorization] != token) {
+				message.reply(status_codes::Unauthorized);
+				return;
+			}
+		}
+
 		if (path[0] == CMD_SUB) {
 			callback_url = params[U("callback_url")];
 			callback_format = params[U("callback_format")];
