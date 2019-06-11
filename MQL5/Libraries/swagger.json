@@ -286,7 +286,8 @@
             "example" : 1
           },
           "type" : {
-            "type" : "string"
+            "type" : "string",
+            "enum" : [ "ORDER_TYPE_SELL", "ORDER_TYPE_BUY", "ORDER_TYPE_BUY_LIMIT", "ORDER_TYPE_SELL_LIMIT", "ORDER_TYPE_BUY_STOP", "ORDER_TYPE_SELL_STOP", "POSITION_MODIFY", "POSITION_PARTIAL", "POSITION_CLOSE_ID", "POSITION_CLOSE_SYMBOL", "ORDER_MODIFY", "ORDER_CANCEL" ]
           },
           "magic" : {
             "type" : "integer",
