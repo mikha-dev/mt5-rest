@@ -2,6 +2,7 @@
 
 #include <Json.mqh>
 #include <Trade/Trade.mqh>
+#include <Strings/String.mqh>
 
 #import "mt5-rest.dll"
    int Init( const uchar &url[], int port, int command_wait_timeout, const uchar&path[], const uchar &url[]);
@@ -54,6 +55,7 @@ private:
    string tradingModule(CJAVal &dataObject);
    string orderDoneOrError(bool error, string funcName, CTrade &trade);
    string actionDoneOrError(int lastError, string funcName);
+   string fromDateTime(datetime param);
 private:
    bool debug;
 };
@@ -251,7 +253,7 @@ string CRestApi::getPositions() {
               position["magic"]=PositionGetInteger(POSITION_MAGIC);
               position["symbol"]=PositionGetString(POSITION_SYMBOL);
               position["type"]=EnumToString(ENUM_POSITION_TYPE(PositionGetInteger(POSITION_TYPE)));
-              position["time_setup"]=PositionGetInteger(POSITION_TIME);
+              position["time_setup"] = fromDateTime(PositionGetInteger(POSITION_TIME));
               position["open"]=PositionGetDouble(POSITION_PRICE_OPEN);
               position["stoploss"]=PositionGetDouble(POSITION_SL);
               position["takeprofit"]=PositionGetDouble(POSITION_TP);
@@ -302,7 +304,7 @@ string CRestApi::getTransactions(CJAVal &dataObject) {
                   deal["id"] = (string)ticket;
                   deal["price"] = HistoryDealGetDouble(ticket,DEAL_PRICE);
                   deal["commission"] = HistoryDealGetDouble(ticket,DEAL_COMMISSION);
-                  deal["time"]= HistoryDealGetInteger(ticket,DEAL_TIME);
+                  deal["time"]= fromDateTime(HistoryDealGetInteger(ticket,DEAL_TIME));
                   deal["symbol"]=HistoryDealGetString(ticket,DEAL_SYMBOL);
                   deal["type"]=EnumToString(ENUM_DEAL_TYPE(HistoryDealGetInteger(ticket,DEAL_TYPE)));                  
                   deal["profit"] = HistoryDealGetDouble(ticket,DEAL_PROFIT);       
@@ -346,7 +348,7 @@ string CRestApi::getOrders() {
                   order["magic"]=OrderGetInteger(ORDER_MAGIC); 
                   order["symbol"]=OrderGetString(ORDER_SYMBOL);
                   order["type"]=EnumToString(ENUM_ORDER_TYPE(OrderGetInteger(ORDER_TYPE)));
-                  order["time_setup"]=OrderGetInteger(ORDER_TIME_SETUP);
+                  order["time_setup"]=fromDateTime(OrderGetInteger(ORDER_TIME_SETUP));
                   order["open"]=OrderGetDouble(ORDER_PRICE_OPEN);
                   order["stoploss"]=OrderGetDouble(ORDER_SL);
                   order["takeprofit"]=OrderGetDouble(ORDER_TP);
@@ -633,4 +635,14 @@ static string CRestApi::GetErrorID(int error) {
          return("ERR_CODE_UNKNOWN="+IntegerToString(error)); 
          break; 
      } 
+}
+
+string CRestApi::fromDateTime(datetime param) {
+   CString s_iso8601;
+   
+   s_iso8601.Assign(TimeToString(param, TIME_DATE|TIME_MINUTES|TIME_SECONDS));
+   s_iso8601.Replace(" ", "T");
+   s_iso8601.Replace(".", "-");
+   s_iso8601.Append(".000Z");
+   return s_iso8601.Str();
 }
