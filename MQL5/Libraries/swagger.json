@@ -9,6 +9,9 @@
     }
   },
   "tags" : [ {
+    "name" : "symbol",
+    "description" : "Market symbol"
+  },{
     "name" : "account",
     "description" : "MT5 account"
   }, {
@@ -67,6 +70,28 @@
         }
       }
     },
+    "/symbol" : {
+      "get" : {
+        "tags" : [ "symbol" ],
+        "parameters":[{"name":"name","in":"query","required":true,"type":"string"}],
+        "security":[{"apiKey":[]}],
+        "summary" : "get symbol info",
+        "operationId" : "symbol",        
+        "description" : "Loads Symbol info by name\n",
+        "produces" : [ "application/json" ],
+        "responses" : {
+          "200" : {
+            "description" : "bid/ask in json",
+            "schema" : {
+              "$ref" : "#/definitions/Symbol"
+            }
+          },
+          "400" : {
+            "description" : "bad input parameter"
+          }
+        }
+      }
+    },        
     "/orders" : {
       "get" : {
         "tags" : [ "order" ],
@@ -297,6 +322,19 @@
         }
       }
     },
+    "Symbol" : {
+      "type" : "object",
+      "properties" : {
+        "ask" : {
+          "type" : "number",
+          "example" : 1.22323
+        },
+        "bid" : {
+          "type" : "number",
+          "example" : 1.34341
+        }
+      }
+    },    
     "AccountItem" : {
       "type" : "object",
       "properties" : {
