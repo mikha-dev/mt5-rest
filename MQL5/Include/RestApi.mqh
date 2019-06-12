@@ -53,7 +53,9 @@ private:
    string getPosition(CJAVal &dataObject);   
    string getBalanceInfo();
    string getOrders();
+   string getOrdersHistory();
    string getOrder(CJAVal &dataObject);
+   string getOrderHistory(CJAVal &dataObject);
    string getTransactions(CJAVal &dataObject);
    string getTransaction(CJAVal &dataObject);
    string tradingModule(CJAVal &dataObject);
@@ -149,9 +151,17 @@ void CRestApi::Processing(void) {
          response = getOrders();
       }      
 
+      if(action == "orders_history") {
+         response = getOrdersHistory();
+      }            
+
       if(action == "order") {
          response = getOrder(jCommand);
       }      
+      
+      if(action == "order_history") {
+         response = getOrderHistory(jCommand);
+      }            
       
       if(action == "balance") {
          response = getBalanceInfo();
@@ -400,6 +410,49 @@ string CRestApi::getOrders() {
        
        return t;
  }
+ 
+ 
+ string CRestApi::getOrdersHistory() {
+      ResetLastError();
+
+      ulong ticket;      
+      CJAVal data, order;
+      
+      // Get orders
+      HistorySelect(0,TimeCurrent());
+      int ordersTotal = HistoryOrdersTotal();
+      // Create empty array if no orders
+      if(!ordersTotal) {
+        data.Add(order);
+      }
+            
+      for(int i=0;i<ordersTotal;i++) {
+
+         if((ticket=HistoryOrderGetTicket(i))>0) {   
+            order["id"]= (string)ticket;
+            order["open"]=HistoryOrderGetDouble(ticket,ORDER_PRICE_OPEN);         
+            order["symbol"]=HistoryOrderGetString(ticket,ORDER_SYMBOL);
+            
+            order["state"]=EnumToString(ENUM_ORDER_STATE(HistoryOrderGetInteger(ticket, ORDER_STATE)));
+            order["magic"]=HistoryOrderGetInteger(ticket, ORDER_MAGIC); 
+            order["type"]=EnumToString(ENUM_ORDER_TYPE(HistoryOrderGetInteger(ticket, ORDER_TYPE)));
+            order["time_setup"]=fromDateTime(HistoryOrderGetInteger(ticket, ORDER_TIME_SETUP));
+            order["time_done"]=fromDateTime(HistoryOrderGetInteger(ticket, ORDER_TIME_DONE));
+            
+            order["stoploss"]=HistoryOrderGetDouble(ticket, ORDER_SL);
+            order["takeprofit"]=HistoryOrderGetDouble(ticket, ORDER_TP);
+            order["volume"]=HistoryOrderGetDouble(ticket, ORDER_VOLUME_INITIAL);
+            order["position_id"]=HistoryOrderGetInteger(ticket, ORDER_POSITION_ID);
+         
+            data.Add(order);
+          } 
+       }
+         
+       string t=data.Serialize();
+       if(debug) {Print(t);}
+       
+       return t;
+ }
 
 
 //+------------------------------------------------------------------+
@@ -421,6 +474,37 @@ string CRestApi::getOrder(CJAVal &dataObject) {
          order["stoploss"]=OrderGetDouble(ORDER_SL);
          order["takeprofit"]=OrderGetDouble(ORDER_TP);
          order["volume"]=OrderGetDouble(ORDER_VOLUME_INITIAL);
+         
+         return order.Serialize();
+      }            
+      
+      return actionDoneOrError(ERR_TRADE_ORDER_NOT_FOUND, __FUNCTION__);
+}
+
+string CRestApi::getOrderHistory(CJAVal &dataObject) {
+      ResetLastError();
+      
+      COrderInfo myorder;
+      CJAVal data, order;
+      
+      HistorySelect(0,TimeCurrent());
+      ulong ticket = dataObject["id"].ToInt();
+      
+      if (HistoryOrderSelect( ticket )) {
+         order["id"]= (string)ticket;
+         order["open"]=HistoryOrderGetDouble(ticket,ORDER_PRICE_OPEN);         
+         order["symbol"]=HistoryOrderGetString(ticket,ORDER_SYMBOL);
+         
+         order["state"]=EnumToString(ENUM_ORDER_STATE(HistoryOrderGetInteger(ticket, ORDER_STATE)));
+         order["magic"]=HistoryOrderGetInteger(ticket, ORDER_MAGIC); 
+         order["type"]=EnumToString(ENUM_ORDER_TYPE(HistoryOrderGetInteger(ticket, ORDER_TYPE)));
+         order["time_setup"]=fromDateTime(HistoryOrderGetInteger(ticket, ORDER_TIME_SETUP));
+         order["time_done"]=fromDateTime(HistoryOrderGetInteger(ticket, ORDER_TIME_DONE));
+         
+         order["stoploss"]=HistoryOrderGetDouble(ticket, ORDER_SL);
+         order["takeprofit"]=HistoryOrderGetDouble(ticket, ORDER_TP);
+         order["volume"]=HistoryOrderGetDouble(ticket, ORDER_VOLUME_INITIAL);
+         order["position_id"]=HistoryOrderGetInteger(ticket, ORDER_POSITION_ID);
          
          return order.Serialize();
       }            
@@ -631,13 +715,13 @@ void CRestApi::OnTradeTransaction(const MqlTradeTransaction &trans,
                data["result"].Set(res);
                
                string t=data.Serialize();
-               Print("event: " + t);
+               Print("transaction: " + t);
                
-               uchar d[];
-               StringToCharArray(t,d);
-               int ret = RaiseEvent( d );
+               //uchar d[];
+               //StringToCharArray(t,d);
+               //int ret = RaiseEvent( d );
                
-               Print("Event status: " + IntegerToString( ret ));
+               //Print("Event status: " + IntegerToString( ret ));
                //return t;
             }
          break;

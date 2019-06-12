@@ -39,5 +39,5 @@ void OnTradeTransaction(const MqlTradeTransaction& trans,
                         const MqlTradeRequest& request,
                         const MqlTradeResult& result) {
                         
-   //api.OnTradeTransaction( trans, request, result );
+   api.OnTradeTransaction( trans, request, result );
 }

@@ -126,7 +126,50 @@
           "200" : {
             "description" : "order in json",
             "schema" : {
-              "$ref" : "#/definitions/Orders"
+              "$ref" : "#/definitions/Order"
+            }
+          },
+          "400" : {
+            "description" : "bad input parameter"
+          }
+        }
+      }
+    },    
+    "/orders_history" : {
+      "get" : {
+        "tags" : [ "order" ],
+        "security":[{"apiKey":[]}],
+        "summary" : "get account orders history",
+        "operationId" : "orders_history",
+        "description" : "Loads Account Orders History\n",
+        "produces" : [ "application/json" ],
+        "responses" : {
+          "200" : {
+            "description" : "orders array in json",
+            "schema" : {
+              "$ref" : "#/definitions/ArrayOfOrdersHistory"
+            }
+          },
+          "400" : {
+            "description" : "bad input parameter"
+          }
+        }
+      }
+    },
+    "/order_history" : {
+      "get" : {
+        "tags" : [ "order" ],
+        "parameters":[{"name":"id","in":"query","required":true,"type":"string"}],
+        "security":[{"apiKey":[]}],
+        "summary" : "get account order from history",
+        "operationId" : "order_history",        
+        "description" : "Loads Account Order from History by id\n",
+        "produces" : [ "application/json" ],
+        "responses" : {
+          "200" : {
+            "description" : "order in json",
+            "schema" : {
+              "$ref" : "#/definitions/OrderHistory"
             }
           },
           "400" : {
@@ -468,6 +511,107 @@
           "type" : "string",
           "example" : "2019-06-05T19:35:50.000Z"
         },
+        "open" : {
+          "type" : "number",
+          "example" : 1.65656
+        },
+        "stoploss" : {
+          "type" : "number",
+          "example" : 1.65656
+        },
+        "takeprofit" : {
+          "type" : "number",
+          "example" : 1.65656
+        },
+        "volume" : {
+          "type" : "number",
+          "example" : 0.1
+        }
+      }
+    },
+    "ArrayOfOrdersHistory" : {
+      "type" : "array",
+      "items" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "integer",
+            "example" : 1
+          },
+          "type" : {
+            "type" : "string",
+            "enum" : [ "ORDER_TYPE_SELL", "ORDER_TYPE_BUY", "ORDER_TYPE_BUY_LIMIT", "ORDER_TYPE_SELL_LIMIT", "ORDER_TYPE_BUY_STOP", "ORDER_TYPE_SELL_STOP", "POSITION_MODIFY", "POSITION_PARTIAL", "POSITION_CLOSE_ID", "POSITION_CLOSE_SYMBOL", "ORDER_MODIFY", "ORDER_CANCEL" ]
+          },
+          "state" : {
+            "type" : "string",
+            "enum" : [ "ORDER_STATE_STARTED", "ORDER_STATE_PLACED", "ORDER_STATE_CANCELED", "ORDER_STATE_PARTIAL", "ORDER_STATE_FILLED", "ORDER_STATE_REJECTED", "ORDER_STATE_EXPIRED", "ORDER_STATE_REQUEST_ADD", "ORDER_STATE_REQUEST_MODIFY", "ORDER_STATE_REQUEST_CANCEL" ]
+          },          
+          "magic" : {
+            "type" : "integer",
+            "example" : 0
+          },
+          "symbol" : {
+            "type" : "string",
+            "example" : "EURUSD"
+          },
+          "time_setup" : {
+            "type" : "string",
+            "example" : "2019-06-05T19:35:50.000Z"
+          },
+          "time_done" : {
+            "type" : "string",
+            "example" : "2019-06-05T19:35:50.000Z"
+          },          
+          "open" : {
+            "type" : "number",
+            "example" : 1.65656
+          },
+          "stoploss" : {
+            "type" : "number",
+            "example" : 1.65656
+          },
+          "takeprofit" : {
+            "type" : "number",
+            "example" : 1.65656
+          },
+          "volume" : {
+            "type" : "number",
+            "example" : 0.1
+          }
+        }
+      }
+    },
+    "OrderHistory" : {
+      "type" : "object",
+      "properties" : {
+        "id" : {
+          "type" : "integer",
+          "example" : 1
+        },
+        "type" : {
+          "type" : "string",
+          "enum" : [ "ORDER_TYPE_SELL", "ORDER_TYPE_BUY", "ORDER_TYPE_BUY_LIMIT", "ORDER_TYPE_SELL_LIMIT", "ORDER_TYPE_BUY_STOP", "ORDER_TYPE_SELL_STOP", "POSITION_MODIFY", "POSITION_PARTIAL", "POSITION_CLOSE_ID", "POSITION_CLOSE_SYMBOL", "ORDER_MODIFY", "ORDER_CANCEL" ]
+        },
+        "state" : {
+          "type" : "string",
+          "enum" : [ "ORDER_STATE_STARTED", "ORDER_STATE_PLACED", "ORDER_STATE_CANCELED", "ORDER_STATE_PARTIAL", "ORDER_STATE_FILLED", "ORDER_STATE_REJECTED", "ORDER_STATE_EXPIRED", "ORDER_STATE_REQUEST_ADD", "ORDER_STATE_REQUEST_MODIFY", "ORDER_STATE_REQUEST_CANCEL" ]
+        },                  
+        "magic" : {
+          "type" : "integer",
+          "example" : 0
+        },
+        "symbol" : {
+          "type" : "string",
+          "example" : "EURUSD"
+        },
+        "time_setup" : {
+          "type" : "string",
+          "example" : "2019-06-05T19:35:50.000Z"
+        },
+        "time_done" : {
+          "type" : "string",
+          "example" : "2019-06-05T19:35:50.000Z"
+        },                  
         "open" : {
           "type" : "number",
           "example" : 1.65656
