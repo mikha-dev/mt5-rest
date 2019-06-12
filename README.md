@@ -111,6 +111,12 @@ POST /trade - open position, details in POST body
 { "actionType": "ORDER_CANCEL", "id": 1212121 }
 ```
 
+## Order Cancel
+```json
+{ "actionType": "POSITION_PARTIAL", "id": 1212121, "volume": 0.1 }
+```
+
+
 # Examples of /trade output
 ```json
 {
