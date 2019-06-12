@@ -14,6 +14,15 @@
   }, {
     "name" : "trade",
     "description" : "Trade"
+  }, {
+    "name" : "position",
+    "description" : "Position"
+  }, {
+    "name" : "transaction",
+    "description" : "Transaction"
+  }, {
+    "name" : "order",
+    "description" : "Order"
   } ],
   "paths" : {
     "/info" : {
@@ -60,7 +69,7 @@
     },
     "/orders" : {
       "get" : {
-        "tags" : [ "account" ],
+        "tags" : [ "order" ],
         "security":[{"apiKey":[]}],
         "summary" : "get account orders",
         "operationId" : "orders",
@@ -79,19 +88,49 @@
         }
       }
     },
+    "/order" : {
+      "get" : {
+        "tags" : [ "order" ],
+        "parameters":[{"name":"id","in":"query","required":true,"type":"string"}],
+        "security":[{"apiKey":[]}],
+        "summary" : "get account order",
+        "operationId" : "order",        
+        "description" : "Loads Account Order by id\n",
+        "produces" : [ "application/json" ],
+        "responses" : {
+          "200" : {
+            "description" : "order in json",
+            "schema" : {
+              "$ref" : "#/definitions/Orders"
+            }
+          },
+          "400" : {
+            "description" : "bad input parameter"
+          }
+        }
+      }
+    },    
     "/transactions" : {
-      "post" : {
-        "tags" : [ "account" ],
+      "get" : {
+        "tags" : [ "transaction" ],
         "security":[{"apiKey":[]}],
         "summary" : "get account deals/transactions",
         "operationId" : "transactions",
         "description" : "Loads Account Transactions\n",
         "produces" : [ "application/json" ],
-        "parameters" : [ {
-          "in" : "body",
-          "name" : "",
-          "description" : "{\"offset\": 0, \"limit\":10 }",
-          "required" : true,
+        "parameters" : [ 
+        {
+          "in" : "query",
+          "name" : "offset",
+          "required" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        },
+        {
+          "in" : "query",
+          "name" : "limit",
+          "required" : false,
           "schema" : {
             "type" : "string"
           }
@@ -109,9 +148,31 @@
         }
       }
     },    
+    "/transaction" : {
+      "get" : {
+        "tags" : [ "transaction" ],
+        "parameters":[{"name":"id","in":"query","required":true,"type":"string"}],
+        "security":[{"apiKey":[]}],
+        "summary" : "get account transaction",
+        "operationId" : "transaction",        
+        "description" : "Loads Account Transaction by id\n",
+        "produces" : [ "application/json" ],
+        "responses" : {
+          "200" : {
+            "description" : "transaction in json",
+            "schema" : {
+              "$ref" : "#/definitions/Transaction"
+            }
+          },
+          "400" : {
+            "description" : "bad input parameter"
+          }
+        }
+      }
+    },        
     "/positions" : {
       "get" : {
-        "tags" : [ "account" ],
+        "tags" : [ "position" ],
         "security":[{"apiKey":[]}],
         "summary" : "get account positions",
         "operationId" : "positions",
@@ -130,6 +191,28 @@
         }
       }
     },
+    "/position" : {
+      "get" : {
+        "tags" : [ "position" ],
+        "parameters":[{"name":"id","in":"query","required":true,"type":"string"}],
+        "security":[{"apiKey":[]}],
+        "summary" : "get account position",
+        "operationId" : "position",        
+        "description" : "Loads Account Position by id\n",
+        "produces" : [ "application/json" ],
+        "responses" : {
+          "200" : {
+            "description" : "position in json",
+            "schema" : {
+              "$ref" : "#/definitions/Position"
+            }
+          },
+          "400" : {
+            "description" : "bad input parameter"
+          }
+        }
+      }
+    },            
     "/trade" : {
       "post" : {
         "tags" : [ "trade" ],
@@ -303,7 +386,7 @@
           },
           "time_setup" : {
             "type" : "string",
-            "example" : "12.06.2019 10:00:00"
+            "example" : "2019-06-05T19:35:50.000Z"
           },
           "open" : {
             "type" : "number",
@@ -321,6 +404,47 @@
             "type" : "number",
             "example" : 0.1
           }
+        }
+      }
+    },
+    "Order" : {
+      "type" : "object",
+      "properties" : {
+        "id" : {
+          "type" : "integer",
+          "example" : 1
+        },
+        "type" : {
+          "type" : "string",
+          "enum" : [ "ORDER_TYPE_SELL", "ORDER_TYPE_BUY", "ORDER_TYPE_BUY_LIMIT", "ORDER_TYPE_SELL_LIMIT", "ORDER_TYPE_BUY_STOP", "ORDER_TYPE_SELL_STOP", "POSITION_MODIFY", "POSITION_PARTIAL", "POSITION_CLOSE_ID", "POSITION_CLOSE_SYMBOL", "ORDER_MODIFY", "ORDER_CANCEL" ]
+        },
+        "magic" : {
+          "type" : "integer",
+          "example" : 0
+        },
+        "symbol" : {
+          "type" : "string",
+          "example" : "EURUSD"
+        },
+        "time_setup" : {
+          "type" : "string",
+          "example" : "2019-06-05T19:35:50.000Z"
+        },
+        "open" : {
+          "type" : "number",
+          "example" : 1.65656
+        },
+        "stoploss" : {
+          "type" : "number",
+          "example" : 1.65656
+        },
+        "takeprofit" : {
+          "type" : "number",
+          "example" : 1.65656
+        },
+        "volume" : {
+          "type" : "number",
+          "example" : 0.1
         }
       }
     },
@@ -343,7 +467,7 @@
           },
           "time" : {
             "type" : "string",
-            "example" : "12.06.2019 10:00:00"
+            "example" : "2019-06-05T19:35:50.000Z"
           },
           "open" : {
             "type" : "number",
@@ -353,6 +477,76 @@
             "type" : "number",
             "example" : 0.1
           }
+        }
+      }
+    },    
+    "Transaction" : {
+      "type" : "object",
+      "properties" : {
+        "id" : {
+          "type" : "integer",
+          "example" : 1
+        },
+        "type" : {
+          "type" : "string",
+          "enum": [ "DEAL_TYPE_BUY", "DEAL_TYPE_SELL", "DEAL_TYPE_BALANCE", "DEAL_TYPE_CREDIT", "DEAL_TYPE_CHARGE", "DEAL_TYPE_CORRECTION", "DEAL_TYPE_BONUS", "DEAL_TYPE_COMMISSION", "DEAL_TYPE_COMMISSION_DAILY", "DEAL_TYPE_COMMISSION_MONTHLY", "DEAL_TYPE_COMMISSION_AGENT_DAILY", "DEAL_TYPE_COMMISSION_AGENT_MONTHLY", "DEAL_TYPE_INTEREST", "DEAL_TYPE_BUY_CANCELED", "DEAL_TYPE_SELL_CANCELED", "DEAL_DIVIDEND", "DEAL_DIVIDEND_FRANKED", "DEAL_TAX" ]
+        },
+        "symbol" : {
+          "type" : "string",
+          "example" : "EURUSD"
+        },
+        "time" : {
+          "type" : "string",
+          "example" : "2019-06-05T19:35:50.000Z"
+        },
+        "open" : {
+          "type" : "number",
+          "example" : 1.65656
+        },
+        "volume" : {
+          "type" : "number",
+          "example" : 0.1
+        }
+      }
+    },    
+    "Position" : {
+      "type" : "object",
+      "properties" : {
+        "id" : {
+          "type" : "integer",
+          "example" : 1
+        },
+        "type" : {
+          "type" : "string",
+          "enum": ["POSITION_TYPE_BUY", "POSITION_TYPE_SELL"]
+        },
+        "magic" : {
+          "type" : "integer",
+          "example" : 0
+        },
+        "symbol" : {
+          "type" : "string",
+          "example" : "EURUSD"
+        },
+        "time_setup" : {
+          "type" : "string",
+          "example" : "2019-06-05T19:35:50.000Z"
+        },
+        "open" : {
+          "type" : "number",
+          "example" : 1.65656
+        },
+        "stoploss" : {
+          "type" : "number",
+          "example" : 1.65656
+        },
+        "takeprofit" : {
+          "type" : "number",
+          "example" : 1.65656
+        },
+        "volume" : {
+          "type" : "number",
+          "example" : 0.1
         }
       }
     },    
@@ -379,7 +573,7 @@
           },
           "time_setup" : {
             "type" : "string",
-            "example" : "123423232"
+            "example" : "2019-06-05T19:35:50.000Z"
           },
           "open" : {
             "type" : "number",

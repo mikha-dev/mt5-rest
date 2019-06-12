@@ -48,10 +48,14 @@ public:
 private:
    string notImpemented(string command);
    string getAccountInfo();
+   string getSymbolInfo(CJAVal &dataObject);
    string getPositions();
+   string getPosition(CJAVal &dataObject);   
    string getBalanceInfo();
    string getOrders();
+   string getOrder(CJAVal &dataObject);
    string getTransactions(CJAVal &dataObject);
+   string getTransaction(CJAVal &dataObject);
    string tradingModule(CJAVal &dataObject);
    string orderDoneOrError(bool error, string funcName, CTrade &trade);
    string actionDoneOrError(int lastError, string funcName);
@@ -137,8 +141,16 @@ void CRestApi::Processing(void) {
          response = getAccountInfo();
       }
       
+      if(action == "symbol") {
+         response = getSymbolInfo(jCommand);
+      }      
+      
       if(action == "orders") {
          response = getOrders();
+      }      
+
+      if(action == "order") {
+         response = getOrder(jCommand);
       }      
       
       if(action == "balance") {
@@ -149,9 +161,17 @@ void CRestApi::Processing(void) {
          response = getPositions();
       }                  
       
+      if(action == "position") {
+         response = getPosition(jCommand);
+      }                        
+      
       if(action == "transactions") {
          response = getTransactions(jCommand);
       }                        
+      
+      if(action == "transaction") {
+         response = getTransaction(jCommand);
+      }                              
       
       if(action == "trade") {
          response = tradingModule(jCommand);
@@ -178,6 +198,20 @@ string CRestApi::notImpemented(string command) {
    if(debug) Print(t);
    
    return t;
+}
+
+string CRestApi::getSymbolInfo(CJAVal &dataObject) {
+   CJAVal info;
+   
+   string symbol = dataObject["name"].ToStr();
+
+   info["ask"] = SymbolInfoDouble(symbol,SYMBOL_ASK);
+   info["bid"] = SymbolInfoDouble(symbol,SYMBOL_BID);
+
+   string t=info.Serialize();
+   if(debug) Print(t);
+   return t;
+
 }
 
 string CRestApi::getAccountInfo() {  
@@ -298,8 +332,8 @@ string CRestApi::getTransactions(CJAVal &dataObject) {
               data.Add(deal);
             }
             
-            for(int i = MathMin(offset + limit, dealsTotal-1);i>=offset;i--) {
-   
+            for(int i = MathMin(offset + limit, dealsTotal-1);i>=offset;i--) {     
+      
                if((ticket = HistoryDealGetTicket(i))>0) {   
                   deal["id"] = (string)ticket;
                   deal["price"] = HistoryDealGetDouble(ticket,DEAL_PRICE);
@@ -363,6 +397,81 @@ string CRestApi::getOrders() {
        if(debug) {Print(t);}
        
        return t;
+ }
+
+
+//+------------------------------------------------------------------+
+//| Fetch order information                               |
+//+------------------------------------------------------------------+
+string CRestApi::getOrder(CJAVal &dataObject) {
+      ResetLastError();
+      
+      COrderInfo myorder;
+      CJAVal data, order;
+      
+      if (myorder.Select(dataObject["id"].ToInt())) {   
+         order["id"]=(string) myorder.Ticket();
+         order["magic"]=OrderGetInteger(ORDER_MAGIC); 
+         order["symbol"]=OrderGetString(ORDER_SYMBOL);
+         order["type"]=EnumToString(ENUM_ORDER_TYPE(OrderGetInteger(ORDER_TYPE)));
+         order["time_setup"]=fromDateTime(OrderGetInteger(ORDER_TIME_SETUP));
+         order["open"]=OrderGetDouble(ORDER_PRICE_OPEN);
+         order["stoploss"]=OrderGetDouble(ORDER_SL);
+         order["takeprofit"]=OrderGetDouble(ORDER_TP);
+         order["volume"]=OrderGetDouble(ORDER_VOLUME_INITIAL);
+         
+         return order.Serialize();
+      }            
+      
+      return actionDoneOrError(ERR_TRADE_ORDER_NOT_FOUND, __FUNCTION__);
+}
+
+string CRestApi::getTransaction(CJAVal &dataObject) {
+      ResetLastError();
+      
+      CJAVal deal;
+      int ticket = (int)dataObject["id"].ToInt();
+      
+      if (HistorySelect(0,TimeCurrent()) && HistoryDealSelect(ticket)) {   
+         deal["id"] = ticket;
+         deal["price"] = HistoryDealGetDouble(ticket,DEAL_PRICE);
+         deal["commission"] = HistoryDealGetDouble(ticket,DEAL_COMMISSION);
+         deal["time"]= fromDateTime(HistoryDealGetInteger(ticket,DEAL_TIME));
+         deal["symbol"]=HistoryDealGetString(ticket,DEAL_SYMBOL);
+         deal["type"]=EnumToString(ENUM_DEAL_TYPE(HistoryDealGetInteger(ticket,DEAL_TYPE)));                  
+         deal["profit"] = HistoryDealGetDouble(ticket,DEAL_PROFIT);       
+         deal["volume"] = HistoryDealGetDouble(ticket,DEAL_VOLUME);                         
+         
+         return deal.Serialize();
+      }      
+      
+
+      return actionDoneOrError(ERR_TRADE_DEAL_NOT_FOUND, __FUNCTION__);
+ }
+
+string CRestApi::getPosition(CJAVal &dataObject) {
+   ResetLastError();
+   
+   CJAVal position;
+   CPositionInfo myposition;
+   
+   ResetLastError();
+   
+   if(myposition.SelectByTicket(dataObject["id"].ToInt())) {
+        position["id"]=PositionGetInteger(POSITION_IDENTIFIER);
+        position["magic"]=PositionGetInteger(POSITION_MAGIC);
+        position["symbol"]=PositionGetString(POSITION_SYMBOL);
+        position["type"]=EnumToString(ENUM_POSITION_TYPE(PositionGetInteger(POSITION_TYPE)));
+        position["time_setup"] = fromDateTime(PositionGetInteger(POSITION_TIME));
+        position["open"]=PositionGetDouble(POSITION_PRICE_OPEN);
+        position["stoploss"]=PositionGetDouble(POSITION_SL);
+        position["takeprofit"]=PositionGetDouble(POSITION_TP);
+        position["volume"]=PositionGetDouble(POSITION_VOLUME);
+        
+        return position.Serialize();
+    }
+    
+    return actionDoneOrError(ERR_TRADE_POSITION_NOT_FOUND, __FUNCTION__);
  }
 
 //+------------------------------------------------------------------+
@@ -630,6 +739,8 @@ static string CRestApi::GetErrorID(int error) {
       case 65537: return("ERR_DESERIALIZATION");               break;
       case 65538: return("ERR_WRONG_ACTION");                  break;
       case 65539: return("ERR_WRONG_ACTION_TYPE");             break;
+      case ERR_TRADE_DEAL_NOT_FOUND: return("ERR_TRADE_DEAL_NOT_FOUND");          break;
+      
       
       default: 
          return("ERR_CODE_UNKNOWN="+IntegerToString(error)); 
