@@ -292,6 +292,7 @@ string CRestApi::getPositions() {
               position["stoploss"]=PositionGetDouble(POSITION_SL);
               position["takeprofit"]=PositionGetDouble(POSITION_TP);
               position["volume"]=PositionGetDouble(POSITION_VOLUME);
+              position["price_crurrent"]=PositionGetDouble(POSITION_PRICE_CURRENT);
             
               data.Add(position);
             }
@@ -343,7 +344,8 @@ string CRestApi::getTransactions(CJAVal &dataObject) {
                   deal["type"]=EnumToString(ENUM_DEAL_TYPE(HistoryDealGetInteger(ticket,DEAL_TYPE)));                  
                   deal["profit"] = HistoryDealGetDouble(ticket,DEAL_PROFIT);       
                   deal["volume"] = HistoryDealGetDouble(ticket,DEAL_VOLUME);                         
-                  
+                  deal["position_id"] = HistoryDealGetInteger(ticket,DEAL_POSITION_ID);
+                  deal["order_id"] = HistoryDealGetInteger(ticket,DEAL_ORDER);                  
                   data.Add(deal);
                 } 
              }
@@ -440,7 +442,9 @@ string CRestApi::getTransaction(CJAVal &dataObject) {
          deal["symbol"]=HistoryDealGetString(ticket,DEAL_SYMBOL);
          deal["type"]=EnumToString(ENUM_DEAL_TYPE(HistoryDealGetInteger(ticket,DEAL_TYPE)));                  
          deal["profit"] = HistoryDealGetDouble(ticket,DEAL_PROFIT);       
-         deal["volume"] = HistoryDealGetDouble(ticket,DEAL_VOLUME);                         
+         deal["volume"] = HistoryDealGetDouble(ticket,DEAL_VOLUME);
+         deal["position_id"] = HistoryDealGetInteger(ticket,DEAL_POSITION_ID);
+         deal["order_id"] = HistoryDealGetInteger(ticket,DEAL_ORDER);
          
          return deal.Serialize();
       }      
@@ -467,6 +471,7 @@ string CRestApi::getPosition(CJAVal &dataObject) {
         position["stoploss"]=PositionGetDouble(POSITION_SL);
         position["takeprofit"]=PositionGetDouble(POSITION_TP);
         position["volume"]=PositionGetDouble(POSITION_VOLUME);
+        position["price_crurrent"]=PositionGetDouble(POSITION_PRICE_CURRENT);
         
         return position.Serialize();
     }

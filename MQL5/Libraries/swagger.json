@@ -574,6 +574,10 @@
           "type" : "number",
           "example" : 1.65656
         },
+        "price_current" : {
+          "type" : "number",
+          "example" : 1.65656
+        },                  
         "stoploss" : {
           "type" : "number",
           "example" : 1.65656
@@ -617,6 +621,10 @@
             "type" : "number",
             "example" : 1.65656
           },
+         "price_current" : {
+            "type" : "number",
+            "example" : 1.65656
+          },          
           "stoploss" : {
             "type" : "number",
             "example" : 1.65656
