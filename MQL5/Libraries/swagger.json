@@ -396,6 +396,9 @@
         },
         "volue_sma": {
           "type": "number"
+        },
+        "market_price": {
+          "type": "number"
         }
       }
     },    
