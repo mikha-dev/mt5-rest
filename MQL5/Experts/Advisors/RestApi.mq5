@@ -28,7 +28,7 @@ void OnDeinit(const int reason) {
 
    EventKillTimer();
    
-   api.Deinit();
+ //  api.Deinit();
 }
 
 void OnTimer() {
