@@ -212,7 +212,11 @@ void MicroserviceController::handleGet(http_request message) {
 
 		string command = ws2s(result.serialize());
 		commands.push_back(command);
-		for (int i = 0; i < wait_timeout; i++) {
+
+		DWORD dw1 = GetTickCount();
+
+		while(dw1 + wait_timeout > GetTickCount()) {
+
 			if (commandResponses.contains(command)) {					
 				message.reply(status_codes::OK, commandResponses[command], "application/json");
 				commandResponses.remove(command);
