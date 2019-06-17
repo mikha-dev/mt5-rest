@@ -375,6 +375,27 @@
         "bid" : {
           "type" : "number",
           "example" : 1.34341
+        },
+        "min_molume": {
+          "type": "number"
+        },
+        "max_volume": {
+          "type": "number"
+        },
+        "volume_step": {
+          "type": "number"
+        },
+        "tick_size": {
+          "type": "number"
+        },
+        "tick_value": {
+          "type": "number"
+        },
+        "contract_size": {
+          "type": "number"
+        },
+        "volue_sma": {
+          "type": "number"
         }
       }
     },    

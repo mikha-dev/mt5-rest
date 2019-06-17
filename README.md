@@ -6,6 +6,15 @@ time_setup, time is MQL5 datetime, check docs at: https://www.mql5.com/en/docs/b
 
 check "error" for /trade command on that page: https://www.mql5.com/en/docs/constants/errorswarnings/enum_trade_return_codes
 
+## how to compile
+clone repo to any folder on our PC.
+
+Copy MQL5 folder to Data folder of mt5 (how to get where is Data folder is localted, open mt5, click File->Open Data Folder or just click Ctrl+Shft+D).
+In MT5 Navigator (to show Naavigator click Ctrl+N) select Expert Advisors->Advisors. Right click on RestApi, select Modify. Editor will be opened, press F7 to compile. Done.
+
+To compile C++ dll use Visual Studio 2017. Use .sln file to open solution in VS, select Realease x64 and press Ctrl+Shft+b to build dll file. Output is located under /x64 folder.
+
+
 ## Commands
 
 POST /sub - setup web hook. options: callback_url and callback_format (json or x-form)
