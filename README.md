@@ -21,6 +21,8 @@ To compile C++ dll use Visual Studio 2017. Use .sln file to open solution in VS,
 
 POST /sub - setup web hook. options: callback_url and callback_format (json or x-form)
 
+GET /symbols/{name} - get symbol informaiton including ask/bid prices.
+
 GET /info - get account details, number of  orders, number of positions
 
 GET /positions - returns list of positions
