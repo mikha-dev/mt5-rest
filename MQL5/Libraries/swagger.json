@@ -21,8 +21,8 @@
     "name" : "position",
     "description" : "Position"
   }, {
-    "name" : "transaction",
-    "description" : "Transaction"
+    "name" : "deal",
+    "description" : "Deal/Transaction"
   }, {
     "name" : "order",
     "description" : "Order"
@@ -178,36 +178,36 @@
         }
       }
     },    
-    "/deals" : {
+    "/dealsrequest/{offset}/{limit}" : {
       "get" : {
-        "tags" : [ "transaction" ],
+        "tags" : [ "deal" ],
         "security":[{"apiKey":[]}],
-        "summary" : "get account deals/transactions",
-        "operationId" : "transactions",
-        "description" : "Loads Account Transactions\n",
+        "summary" : "get account deals",
+        "operationId" : "dealrequest",
+        "description" : "Loads Account Deals\n",
         "produces" : [ "application/json" ],
         "parameters" : [ 
         {
-          "in" : "query",
+          "in" : "path",
           "name" : "offset",
-          "required" : false,
+          "required" : true,
           "schema" : {
             "type" : "string"
           }
         },
         {
-          "in" : "query",
+          "in" : "path",
           "name" : "limit",
-          "required" : false,
+          "required" : true,
           "schema" : {
             "type" : "string"
           }
         } ],        
         "responses" : {
           "200" : {
-            "description" : "transactions array in json",
+            "description" : "deals array in json",
             "schema" : {
-              "$ref" : "#/definitions/ArrayOfTransactions"
+              "$ref" : "#/definitions/ArrayOfDeals"
             }
           },
           "400" : {
@@ -218,18 +218,18 @@
     },    
     "/deals/{id}" : {
       "get" : {
-        "tags" : [ "transaction" ],
+        "tags" : [ "deal" ],
         "parameters":[{"name":"id","in":"path","required":true,"type":"string"}],
         "security":[{"apiKey":[]}],
-        "summary" : "get account transaction",
-        "operationId" : "transaction",        
-        "description" : "Loads Account Transaction by id\n",
+        "summary" : "get account deals",
+        "operationId" : "deals",        
+        "description" : "Loads Account Deals by id\n",
         "produces" : [ "application/json" ],
         "responses" : {
           "200" : {
-            "description" : "transaction in json",
+            "description" : "Deal in json",
             "schema" : {
-              "$ref" : "#/definitions/Transaction"
+              "$ref" : "#/definitions/Deal"
             }
           },
           "400" : {
@@ -629,7 +629,7 @@
         }
       }
     },
-    "ArrayOfTransactions" : {
+    "ArrayOfDeals" : {
       "type" : "array",
       "items" : {
         "type" : "object",
@@ -661,7 +661,7 @@
         }
       }
     },    
-    "Transaction" : {
+    "Deal" : {
       "type" : "object",
       "properties" : {
         "id" : {
