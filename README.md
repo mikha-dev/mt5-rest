@@ -29,7 +29,7 @@ GET /positions - returns list of positions
 
 GET /positions/{id} - return position by id
 
-POST /deals - returns list of deals/transactions
+GET /dealsrequest/{offset}/{limit} - returns list of deals/transactions 
 
 GET /deals/{id} - return deal by id
 
@@ -161,13 +161,5 @@ POST /trade - open position, details in POST body
     "bid": 1.13038,
     "ask": 1.13047,
     "function": "CRestApi::tradingModule"
-}
-```
-
-# Example of POST body for /transactions command
-```json
-{
-    "offset": 0,
-    "limit": 10
 }
 ```
