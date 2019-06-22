@@ -287,13 +287,14 @@
         "security":[{"apiKey":[]}],
         "summary" : "Send Order",
         "produces" : [ "application/json" ],
+        "consumes" : [ "application/json" ],
         "parameters" : [ {
           "in" : "body",
-          "name" : "",
+          "name" : "body",
           "description" : "{\"actionType\": \"ORDER_TYPE_BUY\" }",
           "required" : true,
           "schema" : {
-            "type" : "string"
+            "$ref" : "#/definitions/TradeInput"
           }
         } ],
         "responses" : {
