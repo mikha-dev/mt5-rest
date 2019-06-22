@@ -6,6 +6,8 @@ time_setup, time is MQL5 datetime, check docs at: https://www.mql5.com/en/docs/b
 
 check "error" for /trade command on that page: https://www.mql5.com/en/docs/constants/errorswarnings/enum_trade_return_codes
 
+for enums check that page: https://www.mql5.com/en/docs/constants
+
 ## how to compile
 clone repo to any folder on our PC.
 
@@ -23,11 +25,19 @@ GET /info - get account details, number of  orders, number of positions
 
 GET /positions - returns list of positions
 
-POST /transactions - returns list of deals/transactions
+GET /positions/{id} - return position by id
 
-GET /balance - returns balance, margin, free margin
+POST /deals - returns list of deals/transactions
+
+GET /deals/{id} - return deal by id
 
 GET /orders - returns list of orders
+
+GET /orders/{id} - return order by id
+
+GET /history - returns list of history orders
+
+GET /history/{id} - return order history by id
 
 POST /trade - open position, details in POST body
 
