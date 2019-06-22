@@ -206,6 +206,10 @@ void MicroserviceController::handleGet(http_request message) {
 
 		result[L"command"] = web::json::value::string(path[0]);
 
+		if (path.size() > 1) {
+			result[L"id"] = web::json::value::string(path[1]);
+		}
+
 		for (auto it = params.begin(); it != params.end(); ++it) {
 			result[it->first] = web::json::value::string(it->second);
 		}

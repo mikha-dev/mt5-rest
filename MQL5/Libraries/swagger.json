@@ -70,10 +70,10 @@
         }
       }
     },
-    "/symbol" : {
+    "/symbols/{name}" : {
       "get" : {
         "tags" : [ "symbol" ],
-        "parameters":[{"name":"name","in":"query","required":true,"type":"string"}],
+        "parameters":[{"name":"name","in":"path","required":true,"type":"string"}],
         "security":[{"apiKey":[]}],
         "summary" : "get symbol info",
         "operationId" : "symbol",        
@@ -113,10 +113,10 @@
         }
       }
     },
-    "/order" : {
+    "/orders/{id}" : {
       "get" : {
         "tags" : [ "order" ],
-        "parameters":[{"name":"id","in":"query","required":true,"type":"string"}],
+        "parameters":[{"name":"id","in":"path","required":true,"type":"string"}],
         "security":[{"apiKey":[]}],
         "summary" : "get account order",
         "operationId" : "order",        
@@ -135,7 +135,7 @@
         }
       }
     },    
-    "/orders_history" : {
+    "/history" : {
       "get" : {
         "tags" : [ "order" ],
         "security":[{"apiKey":[]}],
@@ -156,10 +156,10 @@
         }
       }
     },
-    "/order_history" : {
+    "/history/{id}" : {
       "get" : {
         "tags" : [ "order" ],
-        "parameters":[{"name":"id","in":"query","required":true,"type":"string"}],
+        "parameters":[{"name":"id","in":"path","required":true,"type":"string"}],
         "security":[{"apiKey":[]}],
         "summary" : "get account order from history",
         "operationId" : "order_history",        
@@ -178,7 +178,7 @@
         }
       }
     },    
-    "/transactions" : {
+    "/deals" : {
       "get" : {
         "tags" : [ "transaction" ],
         "security":[{"apiKey":[]}],
@@ -216,10 +216,10 @@
         }
       }
     },    
-    "/transaction" : {
+    "/deals/{id}" : {
       "get" : {
         "tags" : [ "transaction" ],
-        "parameters":[{"name":"id","in":"query","required":true,"type":"string"}],
+        "parameters":[{"name":"id","in":"path","required":true,"type":"string"}],
         "security":[{"apiKey":[]}],
         "summary" : "get account transaction",
         "operationId" : "transaction",        
@@ -259,10 +259,10 @@
         }
       }
     },
-    "/position" : {
+    "/positions/{id}" : {
       "get" : {
         "tags" : [ "position" ],
-        "parameters":[{"name":"id","in":"query","required":true,"type":"string"}],
+        "parameters":[{"name":"id","in":"path","required":true,"type":"string"}],
         "security":[{"apiKey":[]}],
         "summary" : "get account position",
         "operationId" : "position",        
@@ -286,7 +286,6 @@
         "tags" : [ "trade" ],
         "security":[{"apiKey":[]}],
         "summary" : "Send Order",
-        "consumes" : [ "text/plain" ],
         "produces" : [ "application/json" ],
         "parameters" : [ {
           "in" : "body",
@@ -375,27 +374,6 @@
         "bid" : {
           "type" : "number",
           "example" : 1.34341
-        },
-        "min_molume": {
-          "type": "number"
-        },
-        "max_volume": {
-          "type": "number"
-        },
-        "volume_step": {
-          "type": "number"
-        },
-        "tick_size": {
-          "type": "number"
-        },
-        "tick_value": {
-          "type": "number"
-        },
-        "contract_size": {
-          "type": "number"
-        },
-        "volue_sma": {
-          "type": "number"
         }
       }
     },    
