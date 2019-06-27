@@ -29,7 +29,7 @@ GET /positions - returns list of positions
 
 GET /positions/{id} - return position by id
 
-GET /dealsrequest/{offset}/{limit} - returns list of deals/transactions 
+GET /deals?offset={offset}&limit={limit} - returns list of deals/transactions 
 
 GET /deals/{id} - return deal by id
 
