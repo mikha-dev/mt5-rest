@@ -210,10 +210,6 @@ void MicroserviceController::handleGet(http_request message) {
 			result[L"id"] = web::json::value::string(path[1]);
 		}
 
-		if (path.size() > 2) {
-			result[L"limit"] = web::json::value::string(path[2]);
-		}
-
 		for (auto it = params.begin(); it != params.end(); ++it) {
 			result[it->first] = web::json::value::string(it->second);
 		}

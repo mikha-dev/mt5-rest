@@ -178,7 +178,7 @@
         }
       }
     },    
-    "/dealsrequest/{offset}/{limit}" : {
+    "/deals?offset={offset}&limit={limit}" : {
       "get" : {
         "tags" : [ "deal" ],
         "security":[{"apiKey":[]}],
@@ -188,7 +188,7 @@
         "produces" : [ "application/json" ],
         "parameters" : [ 
         {
-          "in" : "path",
+          "in" : "query",
           "name" : "offset",
           "required" : true,
           "schema" : {
@@ -196,7 +196,7 @@
           }
         },
         {
-          "in" : "path",
+          "in" : "query",
           "name" : "limit",
           "required" : true,
           "schema" : {
